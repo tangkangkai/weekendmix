@@ -61,20 +61,20 @@ def markTimeRedIfUpset(odds_list, game_result):
 
 
 driver = webdriver.Firefox()
-driver.get("http://zq.win007.com/cn/League/36.html")
+driver.get("http://zq.win007.com/cn/SubLeague/21.html")
 
 year = int(driver.title.encode('ascii','ignore')[2:4])
 contents = driver.find_elements_by_css_selector('td.lsm2') #round
 
 default_solution_set = False
 my_solution_name = 'Auto Solution'
-#company_list = ['BINGOAL']
-company_list =['bet 365']
+company_list = ['BINGOAL']
+#company_list =['bet 365']
 
 excel_rows = []
 
 
-for i in range(0, 36):#TODO len(contents)
+for i in range(0, 4):#TODO len(contents)
     driver.implicitly_wait(5) #wait to bypass the website restriction
     contents[i].click() 
     
@@ -94,7 +94,7 @@ for i in range(0, 36):#TODO len(contents)
         away_redcard = game.find_elements_by_xpath("td[5]/span")
         redcard_result = [home_redcard, away_redcard]
 
-        link = game.find_element_by_link_text('[欧]') 
+        link = game.find_element_by_link_text('[欧]')
         link.click()
         switchTab(driver, 1)
         if not default_solution_set: #custom solution
@@ -135,16 +135,21 @@ for i in range(0, 36):#TODO len(contents)
             default_solution_set = True
         
         #Open detail odds page
-        row_button = WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR, "td[onclick*=OddsHistory")))
+        try:
+            row_button = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "td[onclick*=OddsHistory")))
+        except:
+            driver.close()
+            switchTab(driver, 0)
+            continue
         #row_button = driver.find_element_by_css_selector("td[onclick*=OddsHistory")
         row_button.click()
         switchTab(driver, 2)
 
-        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH, "//tr")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//tr")))
         changedTime = driver.find_elements_by_css_selector("font[color=blue]")
         count = 0
         while not changedTime:
-            driver.implicitly_wait(5)
+            driver.implicitly_wait(10)
             changedTime = driver.find_elements_by_css_selector("font[color=blue]")
             count += 1
             if count > 5:
