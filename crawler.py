@@ -74,9 +74,9 @@ company_list = ['BINGOAL']
 excel_rows = []
 
 
-for i in range(0, 4):#TODO len(contents)
+for i in range(2, 4):#TODO len(contents)
     driver.implicitly_wait(5) #wait to bypass the website restriction
-    contents[i].click() 
+    contents[i].click()
     
     column_m = year * 100 + i + 1
     column_n = 0
@@ -88,7 +88,7 @@ for i in range(0, 4):#TODO len(contents)
         column_n += 1
 
         game_result = game.find_element_by_xpath("td[4]").text
-        if not game_result:
+        if not game_result or '-' not in game_result:
             continue
         home_redcard = game.find_elements_by_xpath("td[3]/span")
         away_redcard = game.find_elements_by_xpath("td[5]/span")
