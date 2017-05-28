@@ -61,7 +61,7 @@ def markTimeRedIfUpset(odds_list, game_result):
 
 
 driver = webdriver.Firefox()
-driver.get("http://zq.win007.com/cn/SubLeague/21.html")
+driver.get("http://zq.win007.com/cn/League/2016/60.html")
 
 year = int(driver.title.encode('ascii','ignore')[2:4])
 contents = driver.find_elements_by_css_selector('td.lsm2') #round
@@ -74,7 +74,7 @@ company_list = ['BINGOAL']
 excel_rows = []
 
 
-for i in range(2, 4):#TODO len(contents)
+for i in range(0, 30):
     driver.implicitly_wait(5) #wait to bypass the website restriction
     contents[i].click()
     
@@ -85,6 +85,7 @@ for i in range(2, 4):#TODO len(contents)
     games = tableElem.find_elements_by_css_selector("tr")[2:]
     
     for game in games: #game
+        driver.implicitly_wait(5) #wait to bypass the website restriction
         column_n += 1
 
         game_result = game.find_element_by_xpath("td[4]").text
@@ -136,7 +137,7 @@ for i in range(2, 4):#TODO len(contents)
         
         #Open detail odds page
         try:
-            row_button = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "td[onclick*=OddsHistory")))
+            row_button = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "td[onclick*=OddsHistory")))
         except:
             driver.close()
             switchTab(driver, 0)
@@ -145,7 +146,7 @@ for i in range(2, 4):#TODO len(contents)
         row_button.click()
         switchTab(driver, 2)
 
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//tr")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//tr")))
         changedTime = driver.find_elements_by_css_selector("font[color=blue]")
         count = 0
         while not changedTime:
