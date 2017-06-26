@@ -61,21 +61,22 @@ def markTimeRedIfUpset(odds_list, game_result):
 
 
 driver = webdriver.Firefox()
-driver.get("http://zq.win007.com/cn/League/2016/60.html")
+driver.get("http://zq.win007.com/cn/SubLeague/2.html")
 
 year = int(driver.title.encode('ascii','ignore')[2:4])
 contents = driver.find_elements_by_css_selector('td.lsm2') #round
 
 default_solution_set = False
 my_solution_name = 'Auto Solution'
-company_list = ['BINGOAL']
+#company_list = ['BINGOAL']
 #company_list =['bet 365']
+company_list =['竞彩官方']
 
 excel_rows = []
 
 
-for i in range(0, 30):
-    driver.implicitly_wait(5) #wait to bypass the website restriction
+for i in range(0, 29):
+    driver.implicitly_wait(8) #wait to bypass the website restriction
     contents[i].click()
     
     column_m = year * 100 + i + 1
@@ -85,7 +86,7 @@ for i in range(0, 30):
     games = tableElem.find_elements_by_css_selector("tr")[2:]
     
     for game in games: #game
-        driver.implicitly_wait(5) #wait to bypass the website restriction
+        driver.implicitly_wait(8) #wait to bypass the website restriction
         column_n += 1
 
         game_result = game.find_element_by_xpath("td[4]").text
@@ -146,7 +147,7 @@ for i in range(0, 30):
         row_button.click()
         switchTab(driver, 2)
 
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//tr")))
+        WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.XPATH, "//tr")))
         changedTime = driver.find_elements_by_css_selector("font[color=blue]")
         count = 0
         while not changedTime:
@@ -166,8 +167,8 @@ for i in range(0, 30):
         for column in range(1, 12): #11 columns
             end_odds_list += getOddsElement(end_odds_tr, column, game_result, redcard_result),
             start_odds_list += getOddsElement(start_odds_tr, column, game_result, redcard_result),
-        markTimeRedIfUpset(end_odds_list, game_result)
-        markTimeRedIfUpset(start_odds_list, game_result)
+        #markTimeRedIfUpset(end_odds_list, game_result)
+        #markTimeRedIfUpset(start_odds_list, game_result)
         
         start_odds = Odds(start_odds_list)
         end_odds = Odds(end_odds_list)
@@ -214,13 +215,11 @@ for row in range(len(excel_rows)):
     column += 1
     worksheet.write(row, column, excel_rows[row].column_n, getDefaultFormat(workbook))
     column += 1
-    #write end odds
+    #write start odds
     for j in range(len(start_odds_list)):
         odds = start_odds_list[j]
         format = getDefaultFormat(workbook)
-        if odds.color == 'red':
-            format.set_font_color('red')
-        elif odds.color == 'green':
+        if odds.color == 'green':
             format.set_font_color('green')
         if 0 <= j <= 2:
             format.set_bold(True)
